@@ -46,15 +46,15 @@ Host github.com
 EOF
 fi
 
-git remote rm origin
-git remote add origin git@github.com:$3.git
-
 # Set user and repository globally
 git config --global credential.https://github.com.$1 $1
 git remote set-url origin git@github.com:$3.git
 
 cd $USER_CUSTOM_PATH
 git init
+
+git remote add origin git@github.com:$3.git
+
 git pull git@github.com:$3.git
 
 if [[ $? -eq 0 ]]; then
