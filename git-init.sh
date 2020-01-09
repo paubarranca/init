@@ -6,7 +6,6 @@
 
 GIT_KEY=~/.ssh/git-$1-key
 SSH_CONFIG_FILE=~/.ssh/config
-SSH_CONFIG_PATH_OLD=~/.ssh/config.old/
 
 if [[ "$#" -ne 3 ]]; then
 	echo -e "\nSCRIPT USAGE: ./git-init.sh githubuser githubmail repositoryname \nEXAMPLE: ./git-init.sh johnwilliams john.williams@gmail.com johnwilliams/docker-test\n"
