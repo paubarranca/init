@@ -39,7 +39,7 @@ services:
 EOF
 fi
 
-/root/init/init.sh
+# /root/init/init.sh
 
 }
 
