@@ -1,9 +1,5 @@
 #!/bin/bash -e
 
-function auter_install{
-
-}
-
 function copy_config{
     # logrotate
     cat /root/init/docker-logrotate > /etc/logrotate.d/docker
@@ -51,7 +47,9 @@ mkdir /root/init; cd /root/init
 
 copy_config
 
-docker_install && test_compose
+docker_install
+
+test_compose
 
 # Cleanup
 rm -v !("init.sh"|"init.log"|"docker-compose.yml") 
