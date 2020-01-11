@@ -88,19 +88,18 @@ init_update() {
 
 init_options() {
     CONTAINERS_ID=$(docker container ls -aq)
-    COMPOSE_UP=$(docker-compose up -d --remove-orphans)
 
     case $1 in 
     --recreate)
         echo -e "\nStopping docker containers\n"
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
-        $COMPOSE_UP
+        docker-compose up -d --remove-orphans
         ;;
 
     --pull)
         docker-compose pull
-        $COMPOSE_UP
+        docker-compose up -d --remove-orphans
         ;;
 
     --stop)
