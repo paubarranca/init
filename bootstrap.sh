@@ -83,5 +83,5 @@ cp_config; security_updates; docker_install; test_compose
 
 # Cleanup
 find . ! -name 'docker-compose.yml' ! -name 'init.sh' -type f -exec rm -rf {} +
-rm -d config
+rm -d config; rm -rf .git
 apt-get -qy --purge autoremove || true

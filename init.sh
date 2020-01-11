@@ -62,14 +62,20 @@ bootstrap() {
 cleanup() {
     EXITED_CONTAINERS_ID=$(docker container ls -aq --filter status=exited --filter status=created)
 
-    echo -e "\nStopping containers...."
-    docker stop $EXITED_CONTAINERS_ID > /dev/null
+    if [ $( ls $EXITED_CONTAINERS_ID) ]; then
+        echo -e "\nStopping containers...."
+        docker stop $EXITED_CONTAINERS_ID > /dev/null
+    
+        echo -e "\nDeleting containers...."
+        docker rm $EXITED_CONTAINERS_ID > /dev/null
+    
+        echo -e "\nExecuting image prune...."
+        docker image prune -a -f
+    else
+        echo -e "\nExecuting image prune...."
+        docker image prune -a -f
 
-    echo -e "\nDeleting containers...."
-    docker rm $EXITED_CONTAINERS_ID > /dev/null
-
-    echo -e "\nExecuting image prune...."
-    docker image prune -a -f
+    fi
 }
 
 init_update() {
@@ -84,10 +90,10 @@ init_update() {
 
     echo -e "\nCloning git repo..."
     git clone $REPO_URL /root/init
+    /root/init/bootstrap.sh
 
     echo -e "\nCopying old docker-compose..."
     cp -a /tmp/docker-compose.backup.$(date +'%Y-%m-%d') /root/init/docker-compose.yml; rm -f /tmp/docker-compose.backup.$(date +'%Y-%m-%d')
-    /root/init/init.sh
 }
 
 init_options() {
