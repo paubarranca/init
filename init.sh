@@ -91,7 +91,7 @@ init_update() {
 
 # Main code
 
-cd /root/init
+cd /root/init/
 
 #HELP=0
 #CLEAN=0
@@ -151,7 +151,7 @@ case $1 in
         exit
         ;;
 
-    *)
+    )
         $COMPOSE_UP
 esac
 
