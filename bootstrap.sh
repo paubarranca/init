@@ -74,7 +74,7 @@ EOF
 
 fi
 
-# /root/init/init.sh
+/root/init/init.sh
 
 }
 
@@ -86,6 +86,5 @@ docker_install
 test_compose
 
 # Cleanup
-
-#find . ! -name 'docker-compose.yml' ! -name 'init.sh' -type f -exec rm -rf {} +
+find . ! -name 'docker-compose.yml' ! -name 'init.sh' -type f -exec rm -rf {} +
 apt-get -qy --purge autoremove || true

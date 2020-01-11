@@ -23,7 +23,6 @@ lock_init() {
     fi
 
     echo "$$" > $1
-
 }
 
 unlock_init() {
@@ -47,7 +46,6 @@ check_bootstrap() {
         echo -e "\ninit logrotate or/and docker logrotate not setted up... Bootstrapping..."
         bootstrap
     fi
-
 }
 
 bootstrap() {
@@ -84,7 +82,7 @@ init_update() {
     rm -rf /root/init
     git clone $REPO_URL /root/init
     cp -a /tmp/docker-compose.backup.$(date +'%Y-%m-%d') /root/init/docker-compose.yml; /root/init/init.sh
-
+    rm -f/tmp/docker-compose.backup.$(date +'%Y-%m-%d')
 }
 
 init_options() {
@@ -127,31 +125,12 @@ init_options() {
         exit
         ;;
 
-esac
+    esac
 }
 
 # Main code
 
 cd /root/init/
-
-#HELP=0
-#CLEAN=0
-#RECREATE=0
-#PULL=0
-#STOP=0
-#
-## Read parameters
-#while [ $# -gt 0 ]
-#do
-#    [ "$1" = "--recreate" ] && RECREATE=1
-#    [ "$1" = "--pull" ] && PULL=1
-#    [ "$1" = "--stop" ] && STOP=1
-#    [ "$1" = "--clean" ] && CLEAN=1
-#    [ "$1" = "--help" ] && HELP=1
-#    [ "$1" = "--update" ] && UPDATE=1
-#    shift
-#done
-
 
 lock_init /tmp/init.pid
 
@@ -162,32 +141,5 @@ if [ "$1" = "--recreate" ] || [ "$1" = "--pull" ] || [ "$1" = "--clean" ] || [ "
 else
     docker-compose up -d --remove-orphans
 fi
-
-#if [ RECREATE == 1 ]; then
-#    # Stops and starts containers in the docker-compose
-#    docker stop $CONTAINERS_ID
-#    docker rm $CONTAINERS_ID
-#    $COMPOSE_UP
-#
-#if [ PULL == 1]; then
-#    # refresh exisiting docker images
-#    docker-compose pull
-#    $COMPOSE_UP
-#
-#if [ STOP == 1]; then
-#    # Stops containers in the docker-compose
-#    docker stop $CONTAINERS_ID
-#    docker rm $CONTAINERS_ID
-#
-#if [ CLEAN == 1]; then
-#    cleanup
-#
-#if [ UPDATE == 1]; then
-#    init_update
-#
-#else
-#    $COMPOSE_UP
-#
-#fi
 
 unlock_init /tmp/init.pid
