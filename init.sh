@@ -155,7 +155,7 @@ lock_init /tmp/init.pid
 
 check_bootstrap
 
-if [ $1 -ne 0 ]; then
+if [ $1 == 0 ]; then
     init_options $1
 else
     $COMPOSE_UP
