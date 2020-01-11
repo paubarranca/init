@@ -111,17 +111,6 @@ cd /root/init
 #    shift
 #done
 
-if [ $HELP -gt 0 ]
-then
-    echo $0: Initialize a system using docker-compose file
-    echo "  --pull: Update images from remote registry"
-    echo "  --stop: Stop docker-compose containers"
-    echo "  --update: Update the init repository"
-    echo "  --clean: Stop exited containers & clean unused images"
-    echo "  --recreate: Adds --force-recreate when calling docker-compose"
-    exit
-fi
-
 
 lock_init /tmp/init.pid
 
@@ -161,7 +150,7 @@ case $1 in
         echo "  --recreate: Adds --force-recreate when calling docker-compose"
         exit
         ;;
-        
+
     *)
         $COMPOSE_UP
 esac
