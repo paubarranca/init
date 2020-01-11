@@ -1,14 +1,14 @@
 #!/bin/bash -e
 
-function copy_config{
+cp_config(){
     # logrotate
     cat /root/init/docker-logrotate > /etc/logrotate.d/docker
 
     # sysctl tune
-    cat /root/init/sysctl-kernel.conf > /etc/sysctl.conf
+    cat /root/init/sysctl-kernel > /etc/sysctl.conf
 }
 
-function docker_install{
+docker_install(){
     LAST_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | awk '{print $4}')
 
     echo -e "\nAdding prerequiste packages.... \n\n"
@@ -25,7 +25,7 @@ function docker_install{
     sh -c "curl -L https://raw.githubusercontent.com/docker/compose/${LAST_COMPOSE_VERSION}/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose"
 }
 
-function test_compose{
+test_compose(){
     
 if ! [ -f /root/init/docker-compose.yml ]; then
     cat <<EOF > /root/init/docker-compose.yml
@@ -43,14 +43,14 @@ fi
 
 }
 
-mkdir /root/init; cd /root/init
+cd /root/init
 
-copy_config
+cp_config
 
 docker_install
 
 test_compose
 
 # Cleanup
-rm -v !("init.sh"|"init.log"|"docker-compose.yml") 
+#rm -v !("init.sh"|"init.log"|"docker-compose.yml") 
 apt-get -qy --purge autoremove || true
