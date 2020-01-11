@@ -75,14 +75,19 @@ cleanup() {
 init_update() {
     REPO_URL=https://github.com/paubarranca/init.git
 
+    echo -e "\nBacking up docker-compose..."
     cp -a /root/init/docker-compose.yml /tmp/docker-compose.backup.$(date +'%Y-%m-%d')
 
     # Update init
     cd /root
     rm -rf /root/init
+
+    echo -e "\nCloning git repo..."
     git clone $REPO_URL /root/init
-    cp -a /tmp/docker-compose.backup.$(date +'%Y-%m-%d') /root/init/docker-compose.yml; /root/init/init.sh
-    rm -f/tmp/docker-compose.backup.$(date +'%Y-%m-%d')
+
+    echo -e "\nCopying old docker-compose..."
+    cp -a /tmp/docker-compose.backup.$(date +'%Y-%m-%d') /root/init/docker-compose.yml; rm -f /tmp/docker-compose.backup.$(date +'%Y-%m-%d')
+    /root/init/init.sh
 }
 
 init_options() {
@@ -97,11 +102,13 @@ init_options() {
         ;;
 
     --pull)
+        echo -e "\nRefreshing docker images\n"
         docker-compose pull
         docker-compose up -d --remove-orphans
         ;;
 
     --stop)
+        echo -e "\nStopping docker containers"
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
         ;;
