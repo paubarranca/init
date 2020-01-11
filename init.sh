@@ -1,8 +1,5 @@
 #!/bin/bash -e 
 
-CONTAINERS_ID=$(docker container ls -aq)
-COMPOSE_UP=$(docker-compose up -d --remove-orphans)
-
 lock_init() {
     # $1 = $PID file
     
@@ -90,6 +87,9 @@ init_update() {
 }
 
 init_options() {
+    CONTAINERS_ID=$(docker container ls -aq)
+    COMPOSE_UP=$(docker-compose up -d --remove-orphans)
+
     case $1 in 
     --recreate)
         docker stop $CONTAINERS_ID
@@ -155,7 +155,7 @@ lock_init /tmp/init.pid
 
 check_bootstrap
 
-if [ $1 == 0 ]; then
+if [ -z $1 ]; then
     init_options $1
 else
     $COMPOSE_UP
