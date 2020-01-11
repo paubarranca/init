@@ -92,6 +92,7 @@ init_options() {
 
     case $1 in 
     --recreate)
+        echo -e "\nStopping docker containers\n"
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
         $COMPOSE_UP
@@ -122,6 +123,7 @@ init_options() {
         echo "  --update: Update the init repository"
         echo "  --clean: Stop exited containers & clean unused images"
         echo "  --recreate: Adds --force-recreate when calling docker-compose"
+        unlock_init /tmp/init.pid
         exit
         ;;
 
@@ -155,10 +157,10 @@ lock_init /tmp/init.pid
 
 check_bootstrap
 
-if [ -z $1 ]; then
-    $COMPOSE_UP
+if [ "$1" = "--recreate" ] || [ "$1" = "--pull" ] || [ "$1" = "--clean" ] || [ "$1" = "--stop" ] || [ "$1" = "--help" ] || [ "$1" = "--update" ]; then
+    init_options $1
 else
-    init_options
+    docker-compose up -d --remove-orphans
 fi
 
 #if [ RECREATE == 1 ]; then

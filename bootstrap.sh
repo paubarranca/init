@@ -86,7 +86,6 @@ docker_install
 test_compose
 
 # Cleanup
-/root/init/cleanup.sh
 
 #find . ! -name 'docker-compose.yml' ! -name 'init.sh' -type f -exec rm -rf {} +
 apt-get -qy --purge autoremove || true
