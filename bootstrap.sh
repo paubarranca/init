@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-security_updates(){
+security_updates() {
     SCRIPTS_PATH=/usr/local/scripts/
 
     if [ ! -d "$SCRIPTS_PATH" ]; then
@@ -14,10 +14,12 @@ EOF
  
     chown root: $SCRIPTS_PATH/security-updates
     chmod 700 $SCRIPTS_PATH/security-updates
+    
+    # Install security updates everyday at 2:00 AM
     echo '0 2 * * *  root  /usr/local/scripts/security-updates > /dev/null' > /etc/cron.d/security-updates
 }
 
-cp_config(){
+cp_config() {
     CONFIG_PATH=/root/init/config/
 
     # docker logrotate
@@ -32,9 +34,15 @@ cp_config(){
 
     # sysctl tune
     cat $CONFIG_PATH/sysctl-kernel > /etc/sysctl.conf
+
+    # Start containers at boot
+    echo '@reboot root /root/init/init.sh --pull >> /root/init/init.log' > /etc/cron.d/boot-init
+
+    # Update containers everyday
+    echo '00 08 * * * root /root/init/init.sh --pull >> /root/init/init.log' > /etc/cron.d/daily-update
 }
 
-docker_install(){
+docker_install() {
     LATEST_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
 
     echo -e "\nAdding prerequiste packages.... \n\n"
@@ -51,7 +59,7 @@ docker_install(){
     sh -c "curl -L https://raw.githubusercontent.com/docker/compose/${LATEST_COMPOSE_VERSION}/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose"
 }
 
-test_compose(){
+test_compose() {
     
 if ! [ -f /root/init/docker-compose.yml ]; then
     cat <<EOF > /root/init/docker-compose.yml
