@@ -159,8 +159,7 @@ if [ $1 -ne 0 ]; then
     init_options $1
 else
     $COMPOSE_UP
-
-
+fi
 
 #if [ RECREATE == 1 ]; then
 #    # Stops and starts containers in the docker-compose
