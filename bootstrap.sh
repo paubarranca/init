@@ -9,7 +9,7 @@ security_updates(){
 
     cat << EOF > $SCRIPTS_PATH/security-updates
 #!/bin/bash
-apt list --upgradable | grep -e "-security"; apt list --upgradable | grep -e "-security" | awk -F "/" '{print \$1}' | xargs apt install
+apt update; apt list --upgradable | grep -e "-security" | awk -F "/" '{print \$1}' | xargs apt install
 EOF
  
     chown root: $SCRIPTS_PATH/security-updates
