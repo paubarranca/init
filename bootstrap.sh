@@ -14,7 +14,7 @@ EOF
  
     chown root: $SCRIPTS_PATH/security-updates
     chmod 700 $SCRIPTS_PATH/security-updates
-    echo '0 2 * * *  root  $SCRIPTS_PATH/security-updates' > /etc/crond.d/security-updates
+    cat /root/init/config/cron-security-updates > /etc/crond.d/security-updates
 }
 
 cp_config(){
