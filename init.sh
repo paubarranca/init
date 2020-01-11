@@ -156,9 +156,9 @@ lock_init /tmp/init.pid
 check_bootstrap
 
 if [ -z $1 ]; then
-    init_options $1
-else
     $COMPOSE_UP
+else
+    init_options
 fi
 
 #if [ RECREATE == 1 ]; then
