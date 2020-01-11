@@ -89,34 +89,8 @@ init_update() {
 
 }
 
-# Main code
-
-cd /root/init/
-
-#HELP=0
-#CLEAN=0
-#RECREATE=0
-#PULL=0
-#STOP=0
-#
-## Read parameters
-#while [ $# -gt 0 ]
-#do
-#    [ "$1" = "--recreate" ] && RECREATE=1
-#    [ "$1" = "--pull" ] && PULL=1
-#    [ "$1" = "--stop" ] && STOP=1
-#    [ "$1" = "--clean" ] && CLEAN=1
-#    [ "$1" = "--help" ] && HELP=1
-#    [ "$1" = "--update" ] && UPDATE=1
-#    shift
-#done
-
-
-lock_init /tmp/init.pid
-
-check_bootstrap
-
-case $1 in 
+init_options() {
+    case $1 in 
     --recreate)
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
@@ -151,9 +125,41 @@ case $1 in
         exit
         ;;
 
-    )
-        $COMPOSE_UP
 esac
+}
+
+# Main code
+
+cd /root/init/
+
+#HELP=0
+#CLEAN=0
+#RECREATE=0
+#PULL=0
+#STOP=0
+#
+## Read parameters
+#while [ $# -gt 0 ]
+#do
+#    [ "$1" = "--recreate" ] && RECREATE=1
+#    [ "$1" = "--pull" ] && PULL=1
+#    [ "$1" = "--stop" ] && STOP=1
+#    [ "$1" = "--clean" ] && CLEAN=1
+#    [ "$1" = "--help" ] && HELP=1
+#    [ "$1" = "--update" ] && UPDATE=1
+#    shift
+#done
+
+
+lock_init /tmp/init.pid
+
+check_bootstrap
+
+if [ $1 -ne 0 ]; then
+    init_options $1
+else
+    $COMPOSE_UP
+
 
 
 #if [ RECREATE == 1 ]; then
