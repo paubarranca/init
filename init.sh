@@ -93,24 +93,23 @@ init_update() {
 
 cd /root/init
 
-HELP=0
-CLEAN=0
-RECREATE=0
-PULL=0
-STOP=0
-START=1
-
-# Read parameters
-while [ $# -gt 0 ]
-do
-    [ "$1" = "--recreate" ] && RECREATE=1
-    [ "$1" = "--pull" ] && PULL=1
-    [ "$1" = "--stop" ] && STOP=1
-    [ "$1" = "--clean" ] && CLEAN=1
-    [ "$1" = "--help" ] && HELP=1
-    [] "$1" = "--update" ] && UPDATE=1
-    shift
-done
+#HELP=0
+#CLEAN=0
+#RECREATE=0
+#PULL=0
+#STOP=0
+#
+## Read parameters
+#while [ $# -gt 0 ]
+#do
+#    [ "$1" = "--recreate" ] && RECREATE=1
+#    [ "$1" = "--pull" ] && PULL=1
+#    [ "$1" = "--stop" ] && STOP=1
+#    [ "$1" = "--clean" ] && CLEAN=1
+#    [ "$1" = "--help" ] && HELP=1
+#    [ "$1" = "--update" ] && UPDATE=1
+#    shift
+#done
 
 if [ $HELP -gt 0 ]
 then
@@ -128,31 +127,71 @@ lock_init /tmp/init.pid
 
 check_bootstrap
 
-if [ RECREATE == 1 ]; then
-    # Stops and starts containers in the docker-compose
-    docker stop $CONTAINERS_ID
-    docker rm $CONTAINERS_ID
-    $COMPOSE_UP
+case $1 in 
+    --recreate)
+        docker stop $CONTAINERS_ID
+        docker rm $CONTAINERS_ID
+        $COMPOSE_UP
+        ;;
 
-if [ PULL == 1]; then
-    # refresh exisiting docker images
-    docker-compose pull
-    $COMPOSE_UP
+    --pull)
+        docker-compose pull
+        $COMPOSE_UP
+        ;;
 
-if [ STOP == 1]; then
-    # Stops containers in the docker-compose
-    docker stop $CONTAINERS_ID
-    docker rm $CONTAINERS_ID
+    --stop)
+        docker stop $CONTAINERS_ID
+        docker rm $CONTAINERS_ID
+        ;;
 
-if [ CLEAN == 1]; then
-    cleanup
+    --clean)
+        cleanup
+        ;;
 
-if [ UPDATE == 1]; then
-    init_update
+    --update)
+        init_update
+        ;;
 
-else
-    $COMPOSE_UP
+    --help)
+        echo $0: Initialize a system using docker-compose file
+        echo "  --pull: Update images from remote registry"
+        echo "  --stop: Stop docker-compose containers"
+        echo "  --update: Update the init repository"
+        echo "  --clean: Stop exited containers & clean unused images"
+        echo "  --recreate: Adds --force-recreate when calling docker-compose"
+        exit
+        ;;
+        
+    *)
+        $COMPOSE_UP
+esac
 
-fi
+
+#if [ RECREATE == 1 ]; then
+#    # Stops and starts containers in the docker-compose
+#    docker stop $CONTAINERS_ID
+#    docker rm $CONTAINERS_ID
+#    $COMPOSE_UP
+#
+#if [ PULL == 1]; then
+#    # refresh exisiting docker images
+#    docker-compose pull
+#    $COMPOSE_UP
+#
+#if [ STOP == 1]; then
+#    # Stops containers in the docker-compose
+#    docker stop $CONTAINERS_ID
+#    docker rm $CONTAINERS_ID
+#
+#if [ CLEAN == 1]; then
+#    cleanup
+#
+#if [ UPDATE == 1]; then
+#    init_update
+#
+#else
+#    $COMPOSE_UP
+#
+#fi
 
 unlock_init /tmp/init.pid
