@@ -25,9 +25,6 @@ cp_config() {
     # docker logrotate
     cat $CONFIG_PATH/docker-logrotate > /etc/logrotate.d/docker
 
-    # init logrotate
-    cat $CONFIG_PATH/init-logrotate > /etc/logrotate.d/init
-
     # monit setup
     cat $CONFIG_PATH/service-monit > /etc/monit/monitrc
     /etc/init.d/monit restart
@@ -47,7 +44,6 @@ docker_install() {
 
     echo -e "\nAdding prerequiste packages.... \n\n"
     sudo apt update > /dev/null
-    sudo apt install net-tools ca-certificates cron fail2ban dbus jq curl gnupg2 monit -y > /dev/null
 
     # Install docker
     curl -sSL https://get.docker.com/ | /bin/sh
@@ -80,11 +76,12 @@ fi
 
 cd /root/init
 
-cp_config
-security_updates
-docker_install
-test_compose
+# Pre-packages
+sudo apt install net-tools ca-certificates cron fail2ban dbus jq curl gnupg2 monit -y > /dev/null
+
+cp_config; security_updates; docker_install; test_compose
 
 # Cleanup
 find . ! -name 'docker-compose.yml' ! -name 'init.sh' -type f -exec rm -rf {} +
+rm -d config
 apt-get -qy --purge autoremove || true
