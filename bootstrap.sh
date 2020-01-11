@@ -62,6 +62,7 @@ services:
         image: alpine:latest
 
 EOF
+
 fi
 
 # /root/init/init.sh
@@ -70,7 +71,10 @@ fi
 
 cd /root/init
 
-cp_config; security_updates; docker_install; test_compose
+cp_config
+security_updates
+docker_install
+test_compose
 
 # Cleanup
 
