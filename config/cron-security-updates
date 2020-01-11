@@ -1,1 +1,0 @@
-0 2 * * *  root  /usr/local/scripts/security-updates > /dev/null
