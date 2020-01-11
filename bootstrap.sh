@@ -10,7 +10,8 @@ security_updates(){
     cat << EOF > $SCRIPTS_PATH/security-updates
 #!/bin/bash
 apt list --upgradable | grep -e "-security"; apt list --upgradable | grep -e "-security" | awk -F "/" '{print \$1}' | xargs apt install
-EOF 
+EOF
+ 
     chown root: $SCRIPTS_PATH/security-updates
     chmod 700 $SCRIPTS_PATH/security-updates
     echo '0 2 * * *  root  $SCRIPTS_PATH/security-updates' > /etc/crond.d/security-updates
@@ -74,7 +75,7 @@ cd /root/init
 cp_config
 security_updates
 docker_install
-test_compose
+#test_compose
 
 # Cleanup
 
