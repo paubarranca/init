@@ -80,7 +80,7 @@ init_update() {
     cp -a /root/init/docker-compose.yml /tmp/docker-compose.backup.$(date +'%Y-%m-%d')
 
     # Update init
-    cd /root/
+    cd /root
     rm -rf /root/init
     git clone $REPO_URL /root/init
     cp -a /tmp/docker-compose.backup.$(date +'%Y-%m-%d') /root/init/docker-compose.yml; /root/init/init.sh
