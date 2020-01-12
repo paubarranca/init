@@ -32,7 +32,6 @@ unlock_init() {
 check_bootstrap() {
     DOCKER_COMPOSE_CHECK=$(docker-compose -v > /dev/null)
     DOCKER_CHECK=$(/etc/init.d/docker status > /dev/null)
-    INIT_LOGROTATE=/etc/logrotate.d/init
     DOCKER_LOGROTATE=/etc/logrotate.d/docker
 
     # Check docker & docker-compose statuses
@@ -41,9 +40,9 @@ check_bootstrap() {
         bootstrap
     fi
 
-    # Check docker & init logrotate
-    if [ ! -f $DOCKER_LOGROTATE ] && [ ! -f $INIT_LOGROTATE ]; then
-        echo -e "\ninit logrotate or/and docker logrotate not setted up... Bootstrapping..."
+    # Check docker logrotate
+    if [ ! -f $DOCKER_LOGROTATE ]; then
+        echo -e "\docker logrotate not setted up... Bootstrapping..."
         bootstrap
     fi
 }
