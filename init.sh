@@ -35,14 +35,14 @@ check_bootstrap() {
     DOCKER_LOGROTATE=/etc/logrotate.d/docker
 
     # Check docker & docker-compose statuses
-    if [ $DOCKER_COMPOSE_CHECK ] && [ $DOCKER_CHECK ]; then
+    if [ ! $DOCKER_COMPOSE_CHECK ] || [ ! $DOCKER_CHECK ]; then
         echo -e "\ndocker or/and docker-compose not installed succesfully... Bootstrapping..."
         bootstrap
     fi
 
     # Check docker logrotate
     if [ ! -f $DOCKER_LOGROTATE ]; then
-        echo -e "\docker logrotate not setted up... Bootstrapping..."
+        echo -e "\ndocker logrotate not setted up... Bootstrapping..."
         bootstrap
     fi
 }
