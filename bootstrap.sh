@@ -70,10 +70,11 @@ EOF
 
 fi
 
-/root/init/init.sh
+/root/init/init.sh --clean
 
 }
 
+# Main code
 cd /root/init
 
 # Pre-packages

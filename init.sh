@@ -63,10 +63,10 @@ cleanup() {
     EXITED_CONTAINERS_ID=$(docker container ls -aq --filter status=exited --filter status=created)
 
     if [ $EXITED_CONTAINERS_ID ]; then
-        echo -e "\nStopping containers...."
+        echo -e "\nStopping exited containers...."
         docker stop $EXITED_CONTAINERS_ID > /dev/null
     
-        echo -e "\nDeleting containers...."
+        echo -e "\nDeleting exited containers...."
         docker rm $EXITED_CONTAINERS_ID > /dev/null
     
         echo -e "\nExecuting image prune...."
@@ -74,7 +74,6 @@ cleanup() {
     else
         echo -e "\nExecuting image prune...."
         docker image prune -a -f
-
     fi
 }
 
@@ -101,20 +100,20 @@ init_options() {
 
     case $1 in 
     --recreate)
-        echo -e "\nStopping docker containers\n"
+        echo -e "\Recreating docker containers...\n"
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
         docker-compose up -d --remove-orphans
         ;;
 
     --pull)
-        echo -e "\nRefreshing docker images\n"
+        echo -e "\nRefreshing docker images...\n"
         docker-compose pull
         docker-compose up -d --remove-orphans
         ;;
 
     --stop)
-        echo -e "\nStopping docker containers"
+        echo -e "\nStopping docker containers...\n"
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
         ;;
@@ -129,11 +128,11 @@ init_options() {
 
     --help)
         echo $0: Initialize a system using docker-compose file
+        echo "  --recreate: Stops all containers & start the defined in the docker-compose"
         echo "  --pull: Update images from remote registry"
-        echo "  --stop: Stop docker-compose containers"
-        echo "  --update: Update the init repository"
+        echo "  --stop: Stop all containers"
         echo "  --clean: Stop exited containers & clean unused images"
-        echo "  --recreate: Adds --force-recreate when calling docker-compose"
+        echo "  --update: Update the init repository"
         unlock_init /tmp/init.pid
         exit
         ;;
@@ -142,7 +141,6 @@ init_options() {
 }
 
 # Main code
-
 cd /root/init/
 
 lock_init /tmp/init.pid
