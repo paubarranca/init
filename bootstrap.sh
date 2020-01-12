@@ -42,9 +42,6 @@ cp_config() {
 docker_install() {
     LATEST_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
 
-    echo -e "\nAdding prerequiste packages.... \n\n"
-    sudo apt update > /dev/null
-
     # Install docker
     curl -sSL https://get.docker.com/ | /bin/sh
 
