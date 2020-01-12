@@ -30,8 +30,8 @@ unlock_init() {
 }
 
 check_bootstrap() {
-    DOCKER_COMPOSE_CHECK=$(docker-compose -v > /dev/null)
-    DOCKER_CHECK=$(/etc/init.d/docker status > /dev/null)
+    DOCKER_COMPOSE_CHECK=(docker-compose -v)
+    DOCKER_CHECK=(/etc/init.d/docker status)
     DOCKER_LOGROTATE=/etc/logrotate.d/docker
 
     # Check docker & docker-compose statuses
