@@ -3,8 +3,7 @@
 <h2>Installation</h2>
 
 ```bash
-cd /root/; apt install git -y;
-git clone https://github.com/paubarranca/init.git; bash /root/init/bootstrap.sh
+cd /root/; apt install git -y; git clone https://github.com/paubarranca/init.git; bash /root/init/bootstrap.sh
 ```
 
 <h2>Utilization and cases of use</h2>
