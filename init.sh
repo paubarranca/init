@@ -72,7 +72,6 @@ init_recreate () {
     fi
 }
 
-}
 init_cleanup() {
     EXITED_CONTAINERS_ID=$(docker container ls -aq --filter status=exited --filter status=created)
 
