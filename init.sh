@@ -65,7 +65,7 @@ init_recreate () {
         echo -e "\nNo running containers... Deploying..."
         docker-compose up -d --remove-orphans    
     else
-        echo -e "\Recreating docker containers...\n"
+        echo -e "\nRecreating docker containers...\n"
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
         docker-compose up -d --remove-orphans
