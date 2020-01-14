@@ -58,7 +58,22 @@ bootstrap() {
     fi
 }
 
-cleanup() {
+init_recreate () {
+    CHECK_RUNNING_CONTAINERS=$(docker container ls -aq --filter status=running)
+
+    if [ -z $CHECK_RUNNING_CONTAINERS ]; then
+        echo -e "\nNo running containers... Deploying..."
+        docker-compose up -d --remove-orphans    
+    else
+        echo -e "\Recreating docker containers...\n"
+        docker stop $CONTAINERS_ID
+        docker rm $CONTAINERS_ID
+        docker-compose up -d --remove-orphans
+    fi
+}
+
+}
+init_cleanup() {
     EXITED_CONTAINERS_ID=$(docker container ls -aq --filter status=exited --filter status=created)
 
     if [ $EXITED_CONTAINERS_ID ]; then
@@ -99,10 +114,7 @@ init_options() {
 
     case $1 in 
     --recreate)
-        echo -e "\Recreating docker containers...\n"
-        docker stop $CONTAINERS_ID
-        docker rm $CONTAINERS_ID
-        docker-compose up -d --remove-orphans
+        init_recreate
         ;;
 
     --pull)
@@ -118,7 +130,7 @@ init_options() {
         ;;
 
     --clean)
-        cleanup
+        init_cleanup
         ;;
 
     --update)
