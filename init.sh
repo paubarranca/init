@@ -61,15 +61,14 @@ bootstrap() {
 
 init_recreate () {
     CHECK_RUNNING_CONTAINERS=$(docker container ls -aq --filter status=running)
-    CONTAINERS_ID=$(docker container ls -aq)
 
     if [ -z $CHECK_RUNNING_CONTAINERS ]; then
         echo -e "\nNo running containers... Deploying..."
         docker-compose up -d --remove-orphans    
     else
         echo -e "\nRecreating docker containers..."
-        docker stop $CONTAINERS_ID
-        docker rm $CONTAINERS_ID
+        docker stop $1
+        docker rm $1
         docker-compose up -d --remove-orphans
     fi
 }
@@ -115,7 +114,7 @@ init_options() {
 
     case $1 in 
     --recreate)
-        init_recreate
+        init_recreate $CONTAINERS_ID
         ;;
 
     --pull)
