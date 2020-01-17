@@ -16,7 +16,10 @@ EOF
     chmod 700 $SCRIPTS_PATH/security-updates
     
     # Install security updates everyday at 2:00 AM
-    echo '0 2 * * *  root  /usr/local/scripts/security-updates > /dev/null' > /etc/cron.d/security-updates
+    echo '0 2 * * *  root  /usr/local/scripts/security-updates >> /var/log/security-updates.log' > /etc/cron.d/security-updates
+
+    # security updates logrotate
+    cat $CONFIG_PATH/sec-updates-logrotate > /etc/logrotate.d/security-updates
 }
 
 cp_config() {
@@ -32,11 +35,14 @@ cp_config() {
     # sysctl tune
     cat $CONFIG_PATH/sysctl-kernel > /etc/sysctl.conf
 
-    # Start containers at boot
+    # INIT CRONS - Start containers at boot
     echo '@reboot root /root/init/init.sh --pull >> /root/init/init.log' > /etc/cron.d/boot-init
 
     # Update containers everyday
     echo '00 08 * * * root /root/init/init.sh --pull >> /root/init/init.log' > /etc/cron.d/daily-update
+
+    # init logrotate
+    cat $CONFIG_PATH/init-logrotate > /etc/logrotate.d/init
 }
 
 docker_install() {
