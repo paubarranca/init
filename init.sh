@@ -1,23 +1,22 @@
 #!/bin/bash -e 
 
 lock_init() {
-    # $1 = $PID file
     
     if [ -e $1 ]; then
         CHECK_PID_NUMBER=$(cat $1)
 
         if [ $? != 0 ]; then
-            echo "Lock failed, PID $CHECK_PID_NUMBER is active" >&2
+            echo "Lock failed, PID $CHECK_PID_NUMBER is active"
             exit 1
         fi
 
         if [ ! -d /proc/$CHECK_PID_NUMBER ]; then
             # lock is stale, remove it and restart
-            echo "Removing stale lock of nonexistant PID $CHECK_PID_NUMBER" >&2
+            echo "Removing stale lock of nonexistant PID $CHECK_PID_NUMBER"
             rm -rf "$1" > /dev/null 
         else
             # lock is valid and CHECK_PID_NUMBER is active - exit, we're locked!
-            echo "Lock failed, PID $CHECK_PID_NUMBER is active" >&2
+            echo "Lock failed, PID $CHECK_PID_NUMBER is active"
             exit 1
         fi
     fi
@@ -30,15 +29,17 @@ unlock_init() {
 }
 
 check_bootstrap() {
-    #DOCKER_COMPOSE_CHECK=(docker-compose -v)
-    #DOCKER_CHECK=(/etc/init.d/docker status)
+    DOCKER_COMPOSE_CHECK=$(docker-compose -v | grep version)
+    DOCKER_COMPOSE_RETURN=$(echo $?)
+    DOCKER_CHECK=$(docker ps -a | grep 'CONTAINER ID')
+    DOCKER_RETURN=$(echo $?)
     DOCKER_LOGROTATE=/etc/logrotate.d/docker
 
     # Check docker & docker-compose statuses
-    #if [ $DOCKER_COMPOSE_CHECK > /dev/null ] || [ $DOCKER_CHECK > /dev/null ]; then
-    #    echo -e "\ndocker or/and docker-compose not installed succesfully... Bootstrapping..."
-    #    bootstrap
-    #fi
+    if [ $DOCKER_RETURN -ne 0 ] || [ $DOCKER_COMPOSE_RETURN -ne 0 ] || ([ $DOCKER_RETURN -ne 0 ] && [ $DOCKER_COMPOSE_RETURN -ne 0 ]); then
+        echo -e "\ndocker and/or docker-compose not installed correctly... Bootstrapping..."
+        bootstrap
+    fi
 
     # Check docker logrotate
     if [ ! -f $DOCKER_LOGROTATE ]; then
@@ -65,7 +66,7 @@ init_recreate () {
         echo -e "\nNo running containers... Deploying..."
         docker-compose up -d --remove-orphans    
     else
-        echo -e "\nRecreating docker containers...\n"
+        echo -e "\nRecreating docker containers..."
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
         docker-compose up -d --remove-orphans
@@ -117,13 +118,13 @@ init_options() {
         ;;
 
     --pull)
-        echo -e "\nRefreshing docker images...\n"
+        echo -e "\nRefreshing docker images..."
         docker-compose pull
         docker-compose up -d --remove-orphans
         ;;
 
     --stop)
-        echo -e "\nStopping docker containers...\n"
+        echo -e "\nStopping docker containers..."
         docker stop $CONTAINERS_ID
         docker rm $CONTAINERS_ID
         ;;
