@@ -67,8 +67,8 @@ init_recreate () {
         docker-compose up -d --remove-orphans    
     else
         echo -e "\nRecreating docker containers..."
-        docker stop $1
-        docker rm $1
+        docker stop $CHECK_RUNNING_CONTAINERS
+        docker rm $CHECK_RUNNING_CONTAINERS
         docker-compose up -d --remove-orphans
     fi
 }
@@ -114,7 +114,7 @@ init_options() {
 
     case $1 in 
     --recreate)
-        init_recreate $CONTAINERS_ID
+        init_recreate
         ;;
 
     --pull)
