@@ -61,6 +61,7 @@ bootstrap() {
 
 init_recreate () {
     CHECK_RUNNING_CONTAINERS=$(docker container ls -aq --filter status=running)
+    CONTAINERS_ID=$(docker container ls -aq)
 
     if [ -z $CHECK_RUNNING_CONTAINERS ]; then
         echo -e "\nNo running containers... Deploying..."
@@ -144,7 +145,7 @@ init_options() {
         echo "  --stop: Stop all containers"
         echo "  --clean: Stop exited containers & clean unused images"
         echo "  --update: Update the init repository"
-        unlock_init /tmp/init.pid
+        unlock_init $2
         exit
         ;;
 
@@ -152,16 +153,18 @@ init_options() {
 }
 
 # Main code
+PID_FILE=/tmp/init.pid
+
 cd /root/init/
 
-lock_init /tmp/init.pid
+lock_init $PID_FILE
 
 check_bootstrap
 
 if [ "$1" = "--recreate" ] || [ "$1" = "--pull" ] || [ "$1" = "--clean" ] || [ "$1" = "--stop" ] || [ "$1" = "--help" ] || [ "$1" = "--update" ]; then
-    init_options $1
+    init_options $1 $PID_FILE
 else
     docker-compose up -d --remove-orphans
 fi
 
-unlock_init /tmp/init.pid
+unlock_init $PID_FILE
