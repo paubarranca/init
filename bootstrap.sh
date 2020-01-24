@@ -73,7 +73,7 @@ EOF
 
 fi
 
-if [ -f /tmp/init.pid ]
+if [ -f /tmp/init.pid ]; then
     /root/init/init.sh --clean
 fi
 
