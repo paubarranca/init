@@ -49,7 +49,6 @@ check_bootstrap() {
 }
 
 bootstrap() {
-    REPO_URL=https://github.com/paubarranca/init.git
 
     if [ ! -f /root/init/bootstrap.sh ]; then
         git clone $REPO_URL /root/init
@@ -92,7 +91,6 @@ init_cleanup() {
 }
 
 init_update() {
-    REPO_URL=https://github.com/paubarranca/init.git
 
     echo -e "\nBacking up docker-compose..."
     cp -a /root/init/docker-compose.yml /tmp/docker-compose.backup.$(date +'%Y-%m-%d')
@@ -153,6 +151,7 @@ init_options() {
 
 # Main code
 PID_FILE=/tmp/init.pid
+REPO_URL=https://github.com/paubarranca/init.git
 
 cd /root/init/
 
