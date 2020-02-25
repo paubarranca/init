@@ -19,7 +19,7 @@ EOF
     echo '0 2 * * *  root  /usr/local/scripts/security-updates >> /var/log/security-updates.log' > /etc/cron.d/security-updates
 
     # security updates logrotate
-    cat $CONFIG_PATH/sec-updates-logrotate > /etc/logrotate.d/security-updates
+    cat /root/init/config/sec-updates-logrotate > /etc/logrotate.d/security-updates
 }
 
 cp_config() {
