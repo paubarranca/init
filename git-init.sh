@@ -1,5 +1,19 @@
 #!/bin/bash -e
 
+check_if_host_exists() {
+
+	if [ ! -f $SSH_KNOWN_HOSTS_FILE ]; then
+		touch $SSH_KNOWN_HOSTS_FILE
+		ssh-keyscan github.com >> $SSH_KNOWN_HOSTS_FILE 2>/dev/null 
+		echo -e "\nCreated $SSH_KNOWN_HOSTS_FILE and added github host as known"
+	elif [ ! -n "$(grep "^github.com " $SSH_KNOWN_HOSTS_FILE)" ]; then 
+		ssh-keyscan github.com >> $SSH_KNOWN_HOSTS_FILE 2>/dev/null
+		echo -e "\nAdded github host as known"
+	else 
+		echo -e "\nGithub host already exists in $SSH_KNOWN_HOSTS_FILE... Skipping..."
+	fi
+}
+
 # Constants
 GIT_KEY=~/.ssh/git-$1-key
 SSH_CONFIG_FILE=~/.ssh/config
@@ -38,6 +52,7 @@ fi
 # Use the created key for github hostname
 if grep --quiet $GIT_KEY $SSH_CONFIG_FILE; then
 	echo -e "\nKey already exists in $SSH_CONFIG_FILE... Skipping..." 
+	check_if_host_exists
 else 
 	cat <<EOF >> $SSH_CONFIG_FILE
 Host github.com
@@ -45,17 +60,7 @@ Host github.com
     IdentityFile $GIT_KEY
 EOF
 
-	if [ ! -f $SSH_KNOWN_HOSTS_FILE ]; then
-		touch $SSH_KNOWN_HOSTS_FILE
-		ssh-keyscan github.com >> $SSH_KNOWN_HOSTS_FILE 2>/dev/null 
-		echo -e "\nCreated $SSH_KNOWN_HOSTS_FILE and added github host as known"
-	elif [ ! -n "$(grep "^github.com " $SSH_KNOWN_HOSTS_FILE)" ]; then 
-		ssh-keyscan github.com >> $SSH_KNOWN_HOSTS_FILE 2>/dev/null
-		echo -e "\nAdded github host as known"
-	else 
-		echo -e "\nGithub host already exists in $SSH_KNOWN_HOSTS_FILE... Skipping..."
-	fi
-
+	check_if_host_exists
 fi
 
 # Set origin to push automatically via vscode
