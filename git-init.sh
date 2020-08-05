@@ -12,6 +12,7 @@ check_if_host_exists() {
 	else 
 		echo -e "\nGithub host already exists in $SSH_KNOWN_HOSTS_FILE... Skipping..."
 	fi
+
 }
 
 # Constants
