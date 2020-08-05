@@ -1,29 +1,30 @@
 #!/bin/bash -e
 
-#$1=$GIT_USER
-#$2=$GIT_MAIL
-#$3=$GIT_REPO
-
+# Constants
 GIT_KEY=~/.ssh/git-$1-key
 SSH_CONFIG_FILE=~/.ssh/config
+SSH_KNOWN_HOSTS_FILE=~/.ssh/known_hosts
 
+# Check that the right number of parameters have been passed
 if [[ "$#" -ne 3 ]]; then
 	echo -e "\nSCRIPT USAGE: ./git-init.sh githubuser githubmail repositoryname \nEXAMPLE: ./git-init.sh johnwilliams john.williams@gmail.com johnwilliams/docker-test\n"
 	exit 1
+else 
+	read -p "Where do you want to pull the repository $3? (use the absolute path, for example ~/repositoryname) : "  REPO_PATH
 fi
 
-read -p "Where do you want to pull the repository $3? (use the absolute path, for example /home/john/myrepo/) : "  USER_CUSTOM_PATH
-
-if [[ ! -d $USER_CUSTOM_PATH ]]; then
-	mkdir -p $USER_CUSTOM_PATH
+if [[ ! -d $REPO_PATH ]]; then
+	mkdir -p $REPO_PATH
 fi
 
-sudo apt-get install git > /dev/null
+if [ ! $(which git) ]; then
+	apt install git
+fi
 
-# GitHub config & keys
 git config --global user.name $1
 git config --global user.email $2
 
+# Create new key pair if it doesn't exist
 if [[ -f $GIT_KEY ]]; then
 	echo -e "\nKey pair already exist... Skipping..."
 else
@@ -34,7 +35,7 @@ else
 	read -n 1 -s -r -p "Press enter when your key is added on GitHub ....."
 fi
 
-# Use the created key for GitHub.com
+# Use the created key for github hostname
 if grep --quiet $GIT_KEY $SSH_CONFIG_FILE; then
 	echo -e "\nKey already exists in $SSH_CONFIG_FILE... Skipping..." 
 else 
@@ -43,24 +44,31 @@ Host github.com
     HostName github.com
     IdentityFile $GIT_KEY
 EOF
+
+	if [ ! -f $SSH_KNOWN_HOSTS_FILE ]; then
+		touch $SSH_KNOWN_HOSTS_FILE
+		ssh-keyscan github.com >> $SSH_KNOWN_HOSTS_FILE 2>/dev/null 
+		echo -e "\nCreated $SSH_KNOWN_HOSTS_FILE and added github host as known"
+	elif [ ! -n "$(grep "^github.com " $SSH_KNOWN_HOSTS_FILE)" ]; then 
+		ssh-keyscan github.com >> $SSH_KNOWN_HOSTS_FILE 2>/dev/null
+		echo -e "\nAdded github host as known"
+	else 
+		echo -e "\nGithub host already exists in $SSH_KNOWN_HOSTS_FILE... Skipping..."
+	fi
+
 fi
 
-# Set user and repository globally
-git config --global credential.https://github.com.$1 $1
-git remote set-url origin git@github.com:$3.git
-
-cd $USER_CUSTOM_PATH
+# Set origin to push automatically via vscode
+cd $REPO_PATH
 git init
 
 git remote add origin git@github.com:$3.git
-
 git pull git@github.com:$3.git
 
 if [[ $? -eq 0 ]]; then
-	echo -e "\nRepository pulled succesfully, available at $USER_CUSTOM_PATH"
+	echo -e "\nRepository pulled succesfully, available at $REPO_PATH"
 	exit 0
 else
 	echo -e "\nERROR: Respository not pulled succesfully, Check if you have correct permissions on the pulled directory, if the public ssh key is correctly associated in GitHub or if the repository name is spelled correctly"
 	exit 2
 fi
-
